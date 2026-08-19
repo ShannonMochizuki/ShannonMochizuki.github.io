@@ -29,7 +29,10 @@ input,select,textarea{width:100%;font:inherit;border:1px solid var(--line);borde
 .tag{font-size:.76rem;background:rgba(255,255,255,.94);color:#17202a;border-radius:8px;padding:5px 8px;font-weight:800;box-shadow:0 1px 4px #0002}
 .tag:nth-child(3){display:none}
 .right{position:absolute;z-index:4;right:12px;top:12px;text-align:right;min-width:0}
-.value{font-weight:800;background:rgba(22,131,79,.94);color:#fff;border-radius:9px;padding:7px 9px;box-shadow:0 1px 4px #0002}
+.value{font-weight:800;color:#fff;border-radius:9px;padding:7px 9px;box-shadow:0 1px 4px #0002}
+.value.profit{background:rgba(22,131,79,.94)}
+.value.loss{background:rgba(185,45,45,.94)}
+.value.unknown{background:rgba(91,101,113,.92)}
 .right .muted{display:none}
 .itemBottom{position:absolute;z-index:4;left:15px;right:15px;bottom:14px;display:flex;justify-content:center;gap:8px;margin:0;color:#e9edf1;font-size:.83rem;text-shadow:0 1px 4px #000}
 .itemBottom span+span::before{content:"•";margin-right:8px;color:#c8cdd3}

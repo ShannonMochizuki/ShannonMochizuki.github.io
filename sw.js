@@ -1,5 +1,5 @@
-const CACHE='model-kit-pwa-v13-gundam-icon';
-const ASSETS=['./','index.html','styles.css?v=13.0','app.js?v=13.0','seed.json','manifest.webmanifest','icon-192.png','icon-512.png','icon-192-maskable.png','icon-512-maskable.png','version.json'];
+const CACHE='model-kit-pwa-v14-roi-badge';
+const ASSETS=['./','index.html','styles.css?v=14.0','app.js?v=14.0','seed.json','manifest.webmanifest','icon-192.png','icon-512.png','icon-192-maskable.png','icon-512-maskable.png','version.json'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(
   caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())

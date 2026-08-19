@@ -1,5 +1,5 @@
-const APP_VERSION='13.0';
-const BUILD_ID='2026-08-20-v13';
+const APP_VERSION='14.0';
+const BUILD_ID='2026-08-20-v14';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -69,6 +69,11 @@ async function seedIfEmpty(){
 
 const money=v=>v==null?'—':`S$${Number(v).toFixed(2)}`;
 const roi=k=>(k.value!=null&&k.paid!=null&&k.paid>0)?((k.value-k.paid)/k.paid)*100:null;
+const valueBadgeClass=k=>{
+  if(k.value==null) return 'unknown';
+  if(k.paid==null||k.paid<=0) return 'unknown';
+  return k.value<k.paid ? 'loss' : 'profit';
+};
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const photosFor=kitId=>allPhotos.filter(p=>p.kitId===kitId).sort((a,b)=>(b.cover?1:0)-(a.cover?1:0)||(a.createdAt||0)-(b.createdAt||0));
 const coverFor=kitId=>photosFor(kitId).find(p=>p.cover)||photosFor(kitId)[0]||null;
@@ -232,7 +237,7 @@ function render(){
             </div>
           </div>
           <div class="right">
-            <div class="value">${money(k.value)}</div>
+            <div class="value ${valueBadgeClass(k)}">${money(k.value)}</div>
             <div class="muted">rarity ${k.rarity??'—'}/10</div>
           </div>
         </div>
@@ -762,7 +767,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=13.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=14.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }

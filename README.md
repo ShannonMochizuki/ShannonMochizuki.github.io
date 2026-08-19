@@ -126,3 +126,9 @@ Clearing browser/site data can erase local records and images.
 - Added 192×192 and 512×512 PNG icons.
 - Added Android maskable/adaptive-icon versions with safe padding.
 - Updated the manifest and cache identifiers so the new icon can be fetched.
+
+
+## v14 — Market value badge reflects profit/loss
+- **Red** when current SGD market value is below recorded SGD purchase price.
+- **Green** when current value is equal to or above purchase price.
+- **Neutral gray** when there is no comparable SGD purchase price or market value.
