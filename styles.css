@@ -80,3 +80,7 @@ label input,label select,label textarea{margin-top:4px;color:var(--text)}
 .stockBadge{font-size:.7rem;padding:4px 7px;border-radius:999px;background:var(--soft);white-space:nowrap}
 .stockBadge.Low{background:#fff4d8}.stockBadge.Empty{background:#fde8e8}.stockBadge.Wishlist{background:#eee9fa}
 .paintEditor{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
+
+.selectedKitPaints{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.selectedPaintChip{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;background:var(--soft);font-size:.76rem;color:var(--text)}
+.kitPaintPicker{display:grid;gap:7px;max-height:52vh;overflow:auto}

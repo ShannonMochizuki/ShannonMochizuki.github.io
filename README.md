@@ -82,3 +82,13 @@ Clearing browser/site data can erase local records and images.
 - Deleting a paint removes its assignment from kits automatically.
 - Version display is now subtle; the visible “Checking app version…” line is removed.
 - The small version badge still checks the deployed version silently and shows an up-arrow only if a newer version exists.
+
+
+## v9 — Paint workflow and cache fix
+- Fixed mixed-version PWA caching that could load v8 HTML with v7 JavaScript.
+- CSS and JavaScript now use versioned URLs.
+- Service worker is explicitly asked to update on launch.
+- “Manage paints” opens a dedicated inventory editor.
+- Required paints now use a clear **Select paints** button.
+- Selected paints appear as chips in the kit editor.
+- Kit tiles continue to show assigned paint requirements.

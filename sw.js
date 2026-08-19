@@ -1,5 +1,5 @@
-const CACHE='model-kit-pwa-v8-paint-inventory';
-const ASSETS=['./','index.html','styles.css','app.js','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg','version.json'];
+const CACHE='model-kit-pwa-v9-cache-fix-paints';
+const ASSETS=['./','index.html','styles.css?v=9.0','app.js?v=9.0','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg','version.json'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(
   caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())

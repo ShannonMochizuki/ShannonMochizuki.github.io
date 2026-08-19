@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1f4f7a">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=9.0">
   <title>My Model Kit Collection</title>
 </head>
 <body>
@@ -125,10 +125,11 @@
         <div class="sectionHead compact">
           <div>
             <h3>Required paints</h3>
-            <div class="muted">Choose from your paint inventory</div>
+            <div id="kitPaintSummary" class="muted">No paints assigned</div>
           </div>
+          <button id="selectKitPaintsBtn" type="button" class="ghost">Select paints</button>
         </div>
-        <div id="kitPaintPicker" class="kitPaintPicker"></div>
+        <div id="selectedKitPaints" class="selectedKitPaints"></div>
       </section>
 
       <label>Notes<textarea id="notes" rows="4"></textarea></label>
@@ -140,6 +141,23 @@
         <button type="button" id="saveBtn" class="primary">Save</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="kitPaintDialog">
+    <div class="editorHead">
+      <div>
+        <div class="eyebrow">MODEL KIT</div>
+        <h2>Select required paints</h2>
+      </div>
+      <button id="closeKitPaintDialogBtn" type="button" class="iconBtn" aria-label="Close">×</button>
+    </div>
+    <div class="muted" style="margin-top:4px">Select the paints you plan to use for this kit.</div>
+    <div id="kitPaintPicker" class="kitPaintPicker" style="margin-top:12px"></div>
+    <div class="dialogActions">
+      <div class="spacer"></div>
+      <button id="cancelKitPaintsBtn" type="button" class="ghost">Cancel</button>
+      <button id="saveKitPaintsBtn" type="button" class="primary">Done</button>
+    </div>
   </dialog>
 
   <dialog id="paintDialog">
@@ -214,6 +232,6 @@
     <div id="backupStatus" class="muted status" aria-live="polite"></div>
   </dialog>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=9.0"></script>
 </body>
 </html>

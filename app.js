@@ -1,5 +1,5 @@
-const APP_VERSION='8.0';
-const BUILD_ID='2026-08-20-v8';
+const APP_VERSION='9.0';
+const BUILD_ID='2026-08-20-v9';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -7,7 +7,7 @@ const PHOTO_STORE='photos';
 const PAINT_STORE='paints';
 const VERSION=3;
 
-let db, allKits=[], allPhotos=[], allPaints=[], activeEditorId=null;
+let db, allKits=[], allPhotos=[], allPaints=[], activeEditorId=null, pendingKitPaintIds=[];
 
 function openDB(){
   return new Promise((resolve,reject)=>{
@@ -101,15 +101,35 @@ function renderPaintInventorySummary(){
   }).join('');
 }
 
+function renderSelectedKitPaints(){
+  const summary=document.querySelector('#kitPaintSummary');
+  const box=document.querySelector('#selectedKitPaints');
+  if(!summary||!box) return;
+
+  const kit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
+  const ids=kit?.paintIds||[];
+  const paints=ids.map(paintById).filter(Boolean);
+
+  summary.textContent=paints.length ? `${paints.length} paint${paints.length===1?'':'s'} assigned` : 'No paints assigned';
+
+  if(!paints.length){
+    box.innerHTML='<span class="muted">Tap “Select paints” to assign paints from your inventory.</span>';
+    return;
+  }
+
+  box.innerHTML=paints.map(p=>`<span class="selectedPaintChip">${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`).join('');
+}
+
 function renderKitPaintPicker(){
   const box=document.querySelector('#kitPaintPicker');
   if(!box) return;
-  const kit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
-  const selected=new Set(kit?.paintIds||[]);
+
   if(!allPaints.length){
-    box.innerHTML='<div class="muted">Add paints to your inventory first.</div>';
+    box.innerHTML='<div class="muted">Your paint inventory is empty. Add paints using “Manage paints” first.</div>';
     return;
   }
+
+  const selected=new Set(pendingKitPaintIds);
   box.innerHTML=allPaints
     .slice()
     .sort((a,b)=>paintLabel(a).localeCompare(paintLabel(b)))
@@ -238,13 +258,14 @@ function renderEditorPhotos(){
 function openEditor(k=null){
   const d=document.querySelector('#editor'), f=id=>document.querySelector('#'+id);
   activeEditorId=k?.id||null;
+  pendingKitPaintIds=[...(k?.paintIds||[])];
   f('editorTitle').textContent=k?'Edit kit':'Add kit';
   f('kitId').value=k?.id||'';
   ['name','franchise','grade','scale','series','paid','paidJpy','value','rarity','status','notes']
     .forEach(id=>f(id).value=k?.[id]??'');
   f('deleteBtn').style.display=k?'inline-block':'none';
   renderEditorPhotos();
-  renderKitPaintPicker();
+  renderSelectedKitPaints();
   d.showModal();
 }
 
@@ -256,7 +277,7 @@ async function refresh(){
   renderPaintInventorySummary();
   if(document.querySelector('#editor').open){
     renderEditorPhotos();
-    renderKitPaintPicker();
+    renderSelectedKitPaints();
   }
   if(document.querySelector('#paintDialog')?.open) renderPaintList();
 }
@@ -505,7 +526,7 @@ document.querySelector('#saveBtn').addEventListener('click',async()=>{
     value:f('value').value===''?null:+f('value').value,
     rarity:f('rarity').value===''?null:+f('rarity').value,
     status:f('status').value,
-    paintIds:selectedKitPaintIds(),
+    paintIds:[...pendingKitPaintIds],
     notes:f('notes').value.trim()
   };
 
@@ -539,10 +560,39 @@ document.querySelector('#photoInput').addEventListener('change',async e=>{
 );
 
 
+
+document.querySelector('#selectKitPaintsBtn').addEventListener('click',()=>{
+  const kit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
+  pendingKitPaintIds=[...(kit?.paintIds||pendingKitPaintIds||[])];
+  renderKitPaintPicker();
+  document.querySelector('#kitPaintDialog').showModal();
+});
+document.querySelector('#closeKitPaintDialogBtn').addEventListener('click',()=>document.querySelector('#kitPaintDialog').close());
+document.querySelector('#cancelKitPaintsBtn').addEventListener('click',()=>document.querySelector('#kitPaintDialog').close());
+document.querySelector('#saveKitPaintsBtn').addEventListener('click',()=>{
+  pendingKitPaintIds=selectedKitPaintIds();
+  document.querySelector('#kitPaintDialog').close();
+  const tempKit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
+  if(tempKit){
+    const original=[...(tempKit.paintIds||[])];
+    tempKit.paintIds=[...pendingKitPaintIds];
+    renderSelectedKitPaints();
+    tempKit.paintIds=original;
+  }else{
+    const summary=document.querySelector('#kitPaintSummary');
+    const box=document.querySelector('#selectedKitPaints');
+    const paints=pendingKitPaintIds.map(paintById).filter(Boolean);
+    summary.textContent=paints.length?`${paints.length} paint${paints.length===1?'':'s'} assigned`:'No paints assigned';
+    box.innerHTML=paints.length?paints.map(p=>`<span class="selectedPaintChip">${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`).join(''):'<span class="muted">Tap “Select paints” to assign paints from your inventory.</span>';
+  }
+});
+
 document.querySelector('#paintInventoryBtn').addEventListener('click',()=>{
   clearPaintEditor();
   renderPaintList();
-  document.querySelector('#paintDialog').showModal();
+  const dlg=document.querySelector('#paintDialog');
+  if(dlg && typeof dlg.showModal==='function') dlg.showModal();
+  else alert('Paint inventory dialog could not be opened. Please update to the latest app version.');
 });
 document.querySelector('#closePaintBtn').addEventListener('click',()=>document.querySelector('#paintDialog').close());
 document.querySelector('#paintSaveBtn').addEventListener('click',savePaint);
@@ -596,5 +646,10 @@ async function updateVersionStatus(){
   db=await openDB();
   await seedIfEmpty();
   await refresh();
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+  if('serviceWorker' in navigator){
+    try{
+      const reg=await navigator.serviceWorker.register('./sw.js?v=9.0');
+      await reg.update();
+    }catch(e){ console.warn('Service worker update failed',e); }
+  }
 })();
