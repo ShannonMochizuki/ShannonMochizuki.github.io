@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1f4f7a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>My Model Kit Collection</title>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">MY COLLECTION</div>
+      <h1>Model Kit Portfolio</h1>
+    </div>
+    <button id="addBtn" class="primary">+ Add</button>
+  </header>
+
+  <main>
+    <section id="metrics" class="metrics"></section>
+
+    <section class="controls">
+      <input id="search" type="search" placeholder="Search kits, series, grade…">
+      <select id="franchiseFilter">
+        <option value="">All franchises</option>
+        <option>Gundam</option>
+        <option>Sakura Wars</option>
+        <option>ZOIDS</option>
+      </select>
+      <select id="sort">
+        <option value="name">Sort: Name</option>
+        <option value="value">Sort: Market value</option>
+        <option value="rarity">Sort: Rarity</option>
+        <option value="roi">Sort: ROI</option>
+      </select>
+    </section>
+
+    <section class="sectionHead">
+      <div><h2>Collection</h2><div id="count" class="muted"></div></div>
+      <button id="backupBtn" class="ghost">Backup</button>
+    </section>
+    <section id="list" class="list"></section>
+  </main>
+
+  <dialog id="editor">
+    <form method="dialog" id="editorForm">
+      <h2 id="editorTitle">Add kit</h2>
+      <input type="hidden" id="kitId">
+      <label>Name<input id="name" required></label>
+      <div class="grid2">
+        <label>Franchise<input id="franchise"></label>
+        <label>Grade<input id="grade"></label>
+      </div>
+      <div class="grid2">
+        <label>Scale<input id="scale"></label>
+        <label>Series<input id="series"></label>
+      </div>
+      <div class="grid2">
+        <label>Paid (SGD)<input id="paid" type="number" step="0.01"></label>
+        <label>Market value (SGD)<input id="value" type="number" step="0.01"></label>
+      </div>
+      <div class="grid2">
+        <label>Rarity /10<input id="rarity" type="number" step="0.5" min="0" max="10"></label>
+        <label>Status<select id="status"><option>Hold</option><option>Watch</option><option>Consider selling</option><option>Sell</option></select></label>
+      </div>
+      <label>Notes<textarea id="notes" rows="3"></textarea></label>
+      <div class="dialogActions">
+        <button value="cancel" class="ghost">Cancel</button>
+        <button type="button" id="deleteBtn" class="danger">Delete</button>
+        <button type="button" id="saveBtn" class="primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="backupDialog">
+    <h2>Backup & restore</h2>
+    <p class="muted">Export a JSON backup before changing phones or clearing browser data.</p>
+    <div class="stack">
+      <button id="exportBtn" class="primary">Export backup</button>
+      <label class="fileLabel">Import backup<input id="importFile" type="file" accept="application/json"></label>
+      <button id="resetDataBtn" class="danger">Reset to bundled collection</button>
+      <button id="closeBackupBtn" class="ghost">Close</button>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
