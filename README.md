@@ -55,3 +55,11 @@ Clearing browser/site data can erase local records and images.
 - Market value remains visible at the upper-right.
 - Purchase price and ROI remain at the bottom.
 - Existing photo gallery, SGD/JPY purchase fields, backups, and local privacy architecture are preserved.
+
+
+## v6 — Visible version information
+- App header now shows the installed version number.
+- The app checks `version.json` from GitHub Pages with cache bypass.
+- When current, it shows **Latest version running**.
+- If GitHub Pages has a newer build, it shows **Update available**.
+- When offline, it still shows the locally running version.

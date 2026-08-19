@@ -1,3 +1,5 @@
+const APP_VERSION='6.0';
+const BUILD_ID='2026-08-20-v6';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -430,7 +432,31 @@ document.querySelector('#resetDataBtn').addEventListener('click',async()=>{
   document.querySelector('#backupStatus').textContent='All local app data deleted.';
 });
 
+
+async function updateVersionStatus(){
+  const badge=document.querySelector('#appVersionBadge');
+  const status=document.querySelector('#buildStatus');
+  if(badge) badge.textContent=`v${APP_VERSION}`;
+  if(!status) return;
+
+  try{
+    const r=await fetch(`version.json?ts=${Date.now()}`,{cache:'no-store'});
+    const remote=await r.json();
+    if(remote.version===APP_VERSION){
+      status.textContent=`Latest version running · ${BUILD_ID}`;
+      status.className='buildStatus ok';
+    }else{
+      status.textContent=`Update available: v${remote.version} · currently v${APP_VERSION}`;
+      status.className='buildStatus warn';
+    }
+  }catch(e){
+    status.textContent=`Running v${APP_VERSION} · offline version check unavailable`;
+    status.className='buildStatus';
+  }
+}
+
 (async()=>{
+  updateVersionStatus();
   db=await openDB();
   await seedIfEmpty();
   await refresh();

@@ -1,5 +1,5 @@
-const CACHE='model-kit-pwa-v5-mobile-gallery';
-const ASSETS=['./','index.html','styles.css','app.js','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg'];
+const CACHE='model-kit-pwa-v6-version-info';
+const ASSETS=['./','index.html','styles.css','app.js','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg','version.json'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(
   caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())

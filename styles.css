@@ -54,3 +54,9 @@ label input,label select,label textarea{margin-top:4px;color:var(--text)}
 .emptyPhotos{grid-column:1/-1;padding:14px;text-align:center;color:var(--muted);font-size:.82rem}.status{margin-top:10px}
 @media(max-width:420px){main{padding:13px}.metric{padding:13px;min-height:106px}.metric .v{font-size:1.23rem}.item,.itemBody{min-height:280px}.name{font-size:1.12rem;left:48px;right:48px}}
 @media(min-width:640px){.item,.itemBody{min-height:390px}.photoGrid{grid-template-columns:repeat(4,1fr)}}
+
+.titleRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.versionBadge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 7px;background:#e7eef8;color:#174c93;font-size:.72rem;font-weight:800;border:1px solid #cfdbea}
+.buildStatus{margin-top:3px;color:var(--muted);font-size:.72rem}
+.buildStatus.ok{color:var(--good)}
+.buildStatus.warn{color:#9a6500}
