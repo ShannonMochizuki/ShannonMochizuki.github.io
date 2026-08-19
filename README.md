@@ -103,3 +103,11 @@ Clearing browser/site data can erase local records and images.
 - Existing brand, code, name, type, stock level, and notes are retained.
 - Kit Required Paints continue linking to this inventory.
 - Paint data and images remain private/local and are included in backups.
+
+
+## v11 — Model tile and tap fix
+- Changed model-kit tiles from 16:9 to a taller 4:3 format.
+- The foreground photo now uses `object-fit: contain`, so the whole model can remain visible.
+- The same photo is used as a blurred full-bleed backdrop, so there are no black letterbox bars.
+- Replaced individual tile click handlers with event delegation on the collection list for more reliable mobile taps.
+- Existing collection, photos, paint inventory, paint assignments, pricing, and backups are preserved.

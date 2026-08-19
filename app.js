@@ -1,5 +1,5 @@
-const APP_VERSION='10.0';
-const BUILD_ID='2026-08-20-v10';
+const APP_VERSION='11.0';
+const BUILD_ID='2026-08-20-v11';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -189,7 +189,8 @@ function render(){
     const r=roi(k), cls=r==null?'':r>=0?'good':'bad';
     const cover=coverFor(k.id), src=cover?blobUrl(cover):null;
     const thumb=src
-      ? `<img class="thumb" src="${src}" alt="">`
+      ? `<img class="photoBackdrop" src="${src}" alt="" aria-hidden="true">
+         <img class="thumb" src="${src}" alt="${esc(k.name)}">`
       : `<div class="thumb placeholder" aria-hidden="true">📦</div>`;
 
     return `<article class="item" data-id="${k.id}">
@@ -220,10 +221,6 @@ function render(){
       </div>
     </article>`;
   }).join('');
-
-  document.querySelectorAll('.item').forEach(el=>
-    el.addEventListener('click',()=>openEditor(allKits.find(k=>k.id===el.dataset.id)))
-  );
 }
 
 function renderEditorPhotos(){
@@ -596,6 +593,15 @@ document.querySelector('#photoInput').addEventListener('change',async e=>{
   document.querySelector('#'+id).addEventListener('input',render)
 );
 
+const collectionList=document.querySelector('#list');
+collectionList.addEventListener('click',e=>{
+  const card=e.target.closest('.item');
+  if(!card) return;
+  const kit=allKits.find(k=>k.id===card.dataset.id);
+  if(kit) openEditor(kit);
+});
+
+
 
 
 document.querySelector('#selectKitPaintsBtn').addEventListener('click',()=>{
@@ -709,7 +715,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=10.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=11.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }
