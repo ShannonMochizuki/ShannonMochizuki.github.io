@@ -37,37 +37,77 @@
     </section>
 
     <section class="sectionHead">
-      <div><h2>Collection</h2><div id="count" class="muted"></div></div>
+      <div>
+        <h2>Collection</h2>
+        <div id="count" class="muted"></div>
+      </div>
       <button id="backupBtn" class="ghost">Backup</button>
     </section>
+
     <section id="list" class="list"></section>
   </main>
 
   <dialog id="editor">
     <form method="dialog" id="editorForm">
-      <h2 id="editorTitle">Add kit</h2>
+      <div class="editorHead">
+        <div>
+          <div class="eyebrow">MODEL KIT</div>
+          <h2 id="editorTitle">Add kit</h2>
+        </div>
+        <button value="cancel" class="iconBtn" aria-label="Close">×</button>
+      </div>
+
       <input type="hidden" id="kitId">
+
+      <section id="photoSection" class="photoSection">
+        <div class="sectionHead compact">
+          <div>
+            <h3>Photos</h3>
+            <div class="muted">Stored only on this device</div>
+          </div>
+          <label class="primary fileButton">
+            + Add photos
+            <input id="photoInput" type="file" accept="image/*" multiple>
+          </label>
+        </div>
+        <div id="photoGrid" class="photoGrid"></div>
+      </section>
+
       <label>Name<input id="name" required></label>
+
       <div class="grid2">
         <label>Franchise<input id="franchise"></label>
         <label>Grade<input id="grade"></label>
       </div>
+
       <div class="grid2">
         <label>Scale<input id="scale"></label>
         <label>Series<input id="series"></label>
       </div>
+
       <div class="grid2">
         <label>Paid (SGD)<input id="paid" type="number" step="0.01"></label>
         <label>Market value (SGD)<input id="value" type="number" step="0.01"></label>
       </div>
+
       <div class="grid2">
         <label>Rarity /10<input id="rarity" type="number" step="0.5" min="0" max="10"></label>
-        <label>Status<select id="status"><option>Hold</option><option>Watch</option><option>Consider selling</option><option>Sell</option></select></label>
+        <label>Status
+          <select id="status">
+            <option>Hold</option>
+            <option>Watch</option>
+            <option>Consider selling</option>
+            <option>Sell</option>
+          </select>
+        </label>
       </div>
-      <label>Notes<textarea id="notes" rows="3"></textarea></label>
+
+      <label>Notes<textarea id="notes" rows="4"></textarea></label>
+
       <div class="dialogActions">
+        <button type="button" id="deleteBtn" class="danger">Delete kit</button>
+        <div class="spacer"></div>
         <button value="cancel" class="ghost">Cancel</button>
-        <button type="button" id="deleteBtn" class="danger">Delete</button>
         <button type="button" id="saveBtn" class="primary">Save</button>
       </div>
     </form>
@@ -75,13 +115,22 @@
 
   <dialog id="backupDialog">
     <h2>Backup & restore</h2>
-    <p class="muted">Export a JSON backup before changing phones or clearing browser data.</p>
+    <p class="muted">
+      Backups include your private collection records and locally stored photos.
+      Keep exported backup files private.
+    </p>
+
     <div class="stack">
-      <button id="exportBtn" class="primary">Export backup</button>
-      <label class="fileLabel">Import backup<input id="importFile" type="file" accept="application/json"></label>
-      <button id="resetDataBtn" class="danger">Reset to bundled collection</button>
+      <button id="exportBtn" class="primary">Export full backup</button>
+      <label class="fileLabel">
+        Import backup
+        <input id="importFile" type="file" accept="application/json">
+      </label>
+      <button id="resetDataBtn" class="danger">Delete all local app data</button>
       <button id="closeBackupBtn" class="ghost">Close</button>
     </div>
+
+    <div id="backupStatus" class="muted status" aria-live="polite"></div>
   </dialog>
 
   <script src="app.js"></script>

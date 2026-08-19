@@ -1,26 +1,32 @@
-# Privacy-safe Model Kit Collection PWA
+# Privacy-safe Model Kit Collection PWA — Photo Edition
 
-This deployment package contains **NO personal collection data**.
+This deployable package contains **no personal collection data**.
 
-## Privacy model
-- The GitHub repository may be public.
-- The deployed website contains only the app shell.
-- Your collection is stored locally on your phone in IndexedDB.
-- Your purchase prices and collection records are NOT uploaded to GitHub.
-- Do not commit your private backup JSON to the repository.
+## New in this version
+- Add multiple photos to each model kit.
+- Select a cover photo.
+- Remove photos.
+- Automatic image resizing/compression before storage.
+- Photos are stored locally in IndexedDB on your phone.
+- Collection cards show the cover photo.
+- Full JSON backup/export now includes photos.
+- Older kit-only JSON backups can still be imported.
 
-## First-time setup on your phone
-1. Host this folder using GitHub Pages.
-2. Open the deployed site on your phone.
-3. Open **Backup**.
-4. Choose **Import backup**.
-5. Select `My_Model_Kit_Collection_PRIVATE_Backup.json`.
-6. Your collection will then be stored locally on that phone.
-7. Install the PWA from Chrome using **Add to Home screen / Install app**.
+## Privacy
+The public GitHub repository contains only app code and an empty `seed.json`.
+Your collection, purchase prices, notes, and photos stay in browser/PWA IndexedDB on your device.
 
-## Important
-If you clear site/browser data, the locally stored collection can be erased.
-Use **Backup → Export backup** periodically and keep the JSON file somewhere private.
+## Updating an existing installation
+Upload these files over the existing GitHub Pages files and commit them.
+The app uses the same IndexedDB database name, so your current collection should remain after the update.
+The database upgrades from version 1 to version 2 and adds a separate `photos` store.
 
-## Cross-device sync
-This version intentionally has no cloud sync. Adding secure sync later would require authentication and a private backend/database.
+After GitHub Pages finishes deploying:
+1. Open the installed app.
+2. If it still looks like the old version, fully close it and reopen it.
+3. If needed, visit the GitHub Pages URL once in Chrome, refresh, then reopen the installed PWA.
+4. Open any kit and use **+ Add photos**.
+
+## Backup warning
+Photos increase backup size. Export a full backup periodically and keep it private.
+Clearing browser/site data can erase local records and images.
