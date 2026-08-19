@@ -111,3 +111,11 @@ Clearing browser/site data can erase local records and images.
 - The same photo is used as a blurred full-bleed backdrop, so there are no black letterbox bars.
 - Replaced individual tile click handlers with event delegation on the collection list for more reliable mobile taps.
 - Existing collection, photos, paint inventory, paint assignments, pricing, and backups are preserved.
+
+
+## v12 — Runtime fix for non-functional kit tiles
+- Fixed missing `renderSelectedKitPaints()` function that caused `openEditor()` to crash on every tile tap.
+- Removed stale `renderPaintList()` reference left over from the pre-tab paint UI.
+- Added fail-safe editor rendering so optional photo/paint sections cannot prevent the kit editor from opening.
+- Retained collection-level click delegation and added an Android touch pointer fallback.
+- Existing model data, photos, paint inventory, assignments, and backups are unchanged.

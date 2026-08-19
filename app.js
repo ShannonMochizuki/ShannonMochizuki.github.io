@@ -1,5 +1,5 @@
-const APP_VERSION='11.0';
-const BUILD_ID='2026-08-20-v11';
+const APP_VERSION='12.0';
+const BUILD_ID='2026-08-20-v12';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -127,6 +127,29 @@ function renderPaintGallery(){
   box.querySelectorAll('.paintCard').forEach(card=>card.addEventListener('click',()=>{
     openPaintEditor(allPaints.find(p=>p.id===card.dataset.paintId));
   }));
+}
+
+function renderSelectedKitPaints(){
+  const summary=document.querySelector('#kitPaintSummary');
+  const box=document.querySelector('#selectedKitPaints');
+  if(!summary||!box) return;
+
+  // While editing, show pending selections so changes are visible before Save.
+  const ids=(pendingKitPaintIds||[]);
+  const paints=ids.map(paintById).filter(Boolean);
+
+  summary.textContent=paints.length
+    ? `${paints.length} paint${paints.length===1?'':'s'} assigned`
+    : 'No paints assigned';
+
+  if(!paints.length){
+    box.innerHTML='<span class="muted">Tap “Select paints” to assign paints from your inventory.</span>';
+    return;
+  }
+
+  box.innerHTML=paints.map(p=>
+    `<span class="selectedPaintChip">${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`
+  ).join('');
 }
 
 function renderKitPaintPicker(){
@@ -263,16 +286,25 @@ function renderEditorPhotos(){
 
 function openEditor(k=null){
   const d=document.querySelector('#editor'), f=id=>document.querySelector('#'+id);
+  if(!d) return alert('Kit editor is unavailable in this build.');
+
   activeEditorId=k?.id||null;
   pendingKitPaintIds=[...(k?.paintIds||[])];
-  f('editorTitle').textContent=k?'Edit kit':'Add kit';
-  f('kitId').value=k?.id||'';
+
+  const title=f('editorTitle'), kitId=f('kitId'), deleteBtn=f('deleteBtn');
+  if(title) title.textContent=k?'Edit kit':'Add kit';
+  if(kitId) kitId.value=k?.id||'';
+
   ['name','franchise','grade','scale','series','paid','paidJpy','value','rarity','status','notes']
-    .forEach(id=>f(id).value=k?.[id]??'');
-  f('deleteBtn').style.display=k?'inline-block':'none';
-  renderEditorPhotos();
-  renderSelectedKitPaints();
-  d.showModal();
+    .forEach(id=>{ const el=f(id); if(el) el.value=k?.[id]??''; });
+
+  if(deleteBtn) deleteBtn.style.display=k?'inline-block':'none';
+
+  try{ renderEditorPhotos(); }catch(err){ console.error('Photo editor render failed',err); }
+  try{ renderSelectedKitPaints(); }catch(err){ console.error('Paint selection render failed',err); }
+
+  if(typeof d.showModal==='function') d.showModal();
+  else d.setAttribute('open','');
 }
 
 async function refresh(){
@@ -286,7 +318,7 @@ async function refresh(){
     renderEditorPhotos();
     renderSelectedKitPaints();
   }
-  if(document.querySelector('#paintDialog')?.open) renderPaintList();
+  if(document.querySelector('#paintDialog')?.open) renderPaintGallery();
 }
 
 function nextKitId(){
@@ -601,6 +633,21 @@ collectionList.addEventListener('click',e=>{
   if(kit) openEditor(kit);
 });
 
+// Some Android installed-PWA builds can suppress a click after a gesture.
+// Pointer-up provides a fallback while de-duplicating the immediately following click.
+let lastPointerOpen=0;
+collectionList.addEventListener('pointerup',e=>{
+  if(e.pointerType!=='touch') return;
+  const card=e.target.closest('.item');
+  if(!card) return;
+  const now=Date.now();
+  if(now-lastPointerOpen<450) return;
+  lastPointerOpen=now;
+  const kit=allKits.find(k=>k.id===card.dataset.id);
+  if(kit) openEditor(kit);
+});
+
+
 
 
 
@@ -715,7 +762,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=11.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=12.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }
