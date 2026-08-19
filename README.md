@@ -30,3 +30,10 @@ After GitHub Pages finishes deploying:
 ## Backup warning
 Photos increase backup size. Export a full backup periodically and keep it private.
 Clearing browser/site data can erase local records and images.
+
+
+## v3 UI changes
+- Collection-card cover photos increased from 72×72 px to 112×112 px on phones.
+- Cover photos grow to 140×140 px on wider displays.
+- Replaced the generic app icon with a model-kit/mecha themed icon.
+- Existing collection records and locally stored photos are preserved.

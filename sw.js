@@ -1,4 +1,4 @@
-const CACHE='model-kit-pwa-v2-photos';
+const CACHE='model-kit-pwa-v3-large-images-icon';
 const ASSETS=['./','index.html','styles.css','app.js','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(

@@ -1,7 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="96" fill="#1f4f7a"/>
-<path d="M110 160h292v210H110z" fill="#fff" opacity=".95"/>
-<path d="M145 125h222l35 35H110z" fill="#dce8f2"/>
-<path d="M175 220h162v28H175zm0 58h118v28H175z" fill="#1f4f7a"/>
-<circle cx="350" cy="305" r="38" fill="#1f4f7a"/>
+  <rect width="512" height="512" rx="96" fill="#1f4f7a"/>
+  <path d="M128 120h256l42 42v230H86V162z" fill="#f8fbff"/>
+  <path d="M128 120h256l42 42H86z" fill="#dce8f2"/>
+  <path d="M256 188l54 30 22 66-26 88H206l-26-88 22-66z" fill="#1f4f7a"/>
+  <path d="M224 204l32-22 32 22-14 32h-36z" fill="#f8fbff"/>
+  <path d="M203 260h106l-12 34h-82z" fill="#f8fbff"/>
+  <circle cx="230" cy="274" r="7" fill="#1f4f7a"/>
+  <circle cx="282" cy="274" r="7" fill="#1f4f7a"/>
+  <path d="M224 317h64v18h-64z" fill="#f8fbff"/>
+  <path d="M154 355h62v18h-62zm142 0h62v18h-62z" fill="#1f4f7a" opacity=".9"/>
 </svg>
