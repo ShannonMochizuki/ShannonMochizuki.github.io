@@ -63,3 +63,11 @@ Clearing browser/site data can erase local records and images.
 - When current, it shows **Latest version running**.
 - If GitHub Pages has a newer build, it shows **Update available**.
 - When offline, it still shows the locally running version.
+
+
+## v7 — Fixed 16:9 collection tiles
+- Every collection tile now uses a true 16:9 aspect ratio.
+- Cover images use `object-fit: cover`, filling the tile edge-to-edge with no black bars.
+- 16:9 source images display without cropping.
+- Non-16:9 images are automatically center-cropped visually to fill the tile.
+- Existing collection data, photos, SGD/JPY purchase fields, and backups are unchanged.

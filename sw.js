@@ -1,4 +1,4 @@
-const CACHE='model-kit-pwa-v6-version-info';
+const CACHE='model-kit-pwa-v7-16x9-tiles';
 const ASSETS=['./','index.html','styles.css','app.js','seed.json','manifest.webmanifest','icon-192.svg','icon-512.svg','version.json'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(

@@ -1,5 +1,5 @@
-const APP_VERSION='6.0';
-const BUILD_ID='2026-08-20-v6';
+const APP_VERSION='7.0';
+const BUILD_ID='2026-08-20-v7';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
