@@ -14,9 +14,8 @@
       <div class="eyebrow">MY COLLECTION</div>
       <div class="titleRow">
         <h1>Model Kit Portfolio</h1>
-        <span id="appVersionBadge" class="versionBadge">v7.0</span>
+        <span id="appVersionBadge" class="versionBadge">v8.0</span>
       </div>
-      <div id="buildStatus" class="buildStatus">Checking app version…</div>
     </div>
     <button id="addBtn" class="primary">+ Add</button>
   </header>
@@ -38,6 +37,17 @@
         <option value="rarity">Sort: Rarity</option>
         <option value="roi">Sort: ROI</option>
       </select>
+    </section>
+
+    <section class="paintPanel">
+      <div class="sectionHead compact">
+        <div>
+          <h2>Paint Inventory</h2>
+          <div id="paintSummary" class="muted">0 paints tracked</div>
+        </div>
+        <button id="paintInventoryBtn" class="ghost">Manage paints</button>
+      </div>
+      <div id="paintQuickList" class="paintQuickList"></div>
     </section>
 
     <section class="sectionHead">
@@ -111,6 +121,16 @@
         </label>
       </div>
 
+      <section class="kitPaintSection">
+        <div class="sectionHead compact">
+          <div>
+            <h3>Required paints</h3>
+            <div class="muted">Choose from your paint inventory</div>
+          </div>
+        </div>
+        <div id="kitPaintPicker" class="kitPaintPicker"></div>
+      </section>
+
       <label>Notes<textarea id="notes" rows="4"></textarea></label>
 
       <div class="dialogActions">
@@ -120,6 +140,58 @@
         <button type="button" id="saveBtn" class="primary">Save</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="paintDialog">
+    <div class="editorHead">
+      <div>
+        <div class="eyebrow">PAINTS</div>
+        <h2>Paint Inventory</h2>
+      </div>
+      <button id="closePaintBtn" type="button" class="iconBtn" aria-label="Close">×</button>
+    </div>
+
+    <div id="paintList" class="paintList"></div>
+
+    <section class="paintEditor">
+      <h3 id="paintEditorTitle">Add paint</h3>
+      <input type="hidden" id="paintId">
+      <div class="grid2">
+        <label>Brand<input id="paintBrand" placeholder="Mr. Color"></label>
+        <label>Code<input id="paintCode" placeholder="C1"></label>
+      </div>
+      <label>Paint name<input id="paintName" placeholder="White"></label>
+      <div class="grid2">
+        <label>Type
+          <select id="paintType">
+            <option value="">Not specified</option>
+            <option>Lacquer</option>
+            <option>Acrylic</option>
+            <option>Enamel</option>
+            <option>Primer</option>
+            <option>Surfacer</option>
+            <option>Clear</option>
+            <option>Metallic</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Stock
+          <select id="paintStock">
+            <option>In stock</option>
+            <option>Low</option>
+            <option>Empty</option>
+            <option>Wishlist</option>
+          </select>
+        </label>
+      </div>
+      <label>Notes<input id="paintNotes" placeholder="Optional"></label>
+      <div class="dialogActions">
+        <button id="paintDeleteBtn" type="button" class="danger">Delete</button>
+        <div class="spacer"></div>
+        <button id="paintClearBtn" type="button" class="ghost">Clear</button>
+        <button id="paintSaveBtn" type="button" class="primary">Save paint</button>
+      </div>
+    </section>
   </dialog>
 
   <dialog id="backupDialog">

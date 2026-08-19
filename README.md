@@ -71,3 +71,14 @@ Clearing browser/site data can erase local records and images.
 - 16:9 source images display without cropping.
 - Non-16:9 images are automatically center-cropped visually to fill the tile.
 - Existing collection data, photos, SGD/JPY purchase fields, and backups are unchanged.
+
+
+## v8 — Paint inventory + kit paint requirements
+- Added a private Paint Inventory stored locally in IndexedDB.
+- Track brand, paint code, paint name, type, stock level, and notes.
+- Assign any paints in your inventory to individual model kits.
+- Required paints appear directly on each 16:9 model-kit tile.
+- Paint inventory is included in full private backups.
+- Deleting a paint removes its assignment from kits automatically.
+- Version display is now subtle; the visible “Checking app version…” line is removed.
+- The small version badge still checks the deployed version silently and shows an up-arrow only if a newer version exists.

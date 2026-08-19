@@ -56,7 +56,27 @@ label input,label select,label textarea{margin-top:4px;color:var(--text)}
 @media(min-width:640px){.photoGrid{grid-template-columns:repeat(4,1fr)}}
 
 .titleRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.versionBadge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 7px;background:#e7eef8;color:#174c93;font-size:.72rem;font-weight:800;border:1px solid #cfdbea}
-.buildStatus{margin-top:3px;color:var(--muted);font-size:.72rem}
-.buildStatus.ok{color:var(--good)}
-.buildStatus.warn{color:#9a6500}
+.versionBadge{display:inline-flex;align-items:center;padding:1px 5px;color:var(--muted);font-size:.66rem;font-weight:650;border:0;background:transparent;opacity:.75}
+
+
+
+
+.paintPanel{margin:14px 0 8px;padding:13px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.paintQuickList{display:flex;gap:6px;overflow-x:auto;padding:3px 0 1px;scrollbar-width:none}
+.paintQuickList::-webkit-scrollbar{display:none}
+.paintChip{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:var(--soft);padding:6px 9px;font-size:.76rem}
+.paintChip.low{background:#fff4d8}.paintChip.empty{background:#fde8e8}.paintChip.wishlist{background:#eee9fa}
+.paintDot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.kitPaintSection{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fafbfc}
+.kitPaintPicker{display:grid;gap:6px;max-height:220px;overflow:auto}
+.paintCheck{display:flex;align-items:center;gap:9px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.paintCheck input{width:auto;margin:0}
+.paintCheckText{flex:1;color:var(--text);font-size:.83rem}
+.paintCheckStock{font-size:.72rem;color:var(--muted)}
+.tilePaints{position:absolute;z-index:3;left:15px;right:15px;bottom:40px;text-align:center;color:#eef2f5;font-size:.72rem;text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paintList{display:grid;gap:7px;margin:12px 0}
+.paintRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.paintRowMain{min-width:0}.paintRowName{font-weight:650}.paintRowMeta{font-size:.75rem;color:var(--muted);margin-top:2px}
+.stockBadge{font-size:.7rem;padding:4px 7px;border-radius:999px;background:var(--soft);white-space:nowrap}
+.stockBadge.Low{background:#fff4d8}.stockBadge.Empty{background:#fde8e8}.stockBadge.Wishlist{background:#eee9fa}
+.paintEditor{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}

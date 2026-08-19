@@ -1,12 +1,13 @@
-const APP_VERSION='7.0';
-const BUILD_ID='2026-08-20-v7';
+const APP_VERSION='8.0';
+const BUILD_ID='2026-08-20-v8';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
 const PHOTO_STORE='photos';
-const VERSION=2;
+const PAINT_STORE='paints';
+const VERSION=3;
 
-let db, allKits=[], allPhotos=[], activeEditorId=null;
+let db, allKits=[], allPhotos=[], allPaints=[], activeEditorId=null;
 
 function openDB(){
   return new Promise((resolve,reject)=>{
@@ -17,6 +18,9 @@ function openDB(){
       if(!d.objectStoreNames.contains(PHOTO_STORE)){
         const s=d.createObjectStore(PHOTO_STORE,{keyPath:'id'});
         s.createIndex('kitId','kitId',{unique:false});
+      }
+      if(!d.objectStoreNames.contains(PAINT_STORE)){
+        d.createObjectStore(PAINT_STORE,{keyPath:'id'});
       }
     };
     req.onsuccess=()=>resolve(req.result);
@@ -74,6 +78,50 @@ function blobUrl(photo){
   if(photo._url) return photo._url;
   photo._url=URL.createObjectURL(photo.blob);
   return photo._url;
+}
+
+
+const paintById=id=>allPaints.find(p=>p.id===id);
+const paintLabel=p=>p?[p.brand,p.code,p.name].filter(Boolean).join(' '):'Unknown paint';
+
+function renderPaintInventorySummary(){
+  const summary=document.querySelector('#paintSummary');
+  const quick=document.querySelector('#paintQuickList');
+  if(!summary||!quick) return;
+  const inStock=allPaints.filter(p=>p.stock==='In stock').length;
+  const low=allPaints.filter(p=>p.stock==='Low').length;
+  summary.textContent=`${allPaints.length} paints · ${inStock} in stock${low?` · ${low} low`:''}`;
+  if(!allPaints.length){
+    quick.innerHTML='<span class="muted">No paints added yet.</span>';
+    return;
+  }
+  quick.innerHTML=allPaints.slice(0,12).map(p=>{
+    const cls=(p.stock||'').toLowerCase().replace(' ','');
+    return `<span class="paintChip ${cls}"><span class="paintDot"></span>${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`;
+  }).join('');
+}
+
+function renderKitPaintPicker(){
+  const box=document.querySelector('#kitPaintPicker');
+  if(!box) return;
+  const kit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
+  const selected=new Set(kit?.paintIds||[]);
+  if(!allPaints.length){
+    box.innerHTML='<div class="muted">Add paints to your inventory first.</div>';
+    return;
+  }
+  box.innerHTML=allPaints
+    .slice()
+    .sort((a,b)=>paintLabel(a).localeCompare(paintLabel(b)))
+    .map(p=>`<label class="paintCheck">
+      <input type="checkbox" value="${p.id}" ${selected.has(p.id)?'checked':''}>
+      <span class="paintCheckText">${esc(paintLabel(p))}</span>
+      <span class="paintCheckStock">${esc(p.stock||'')}</span>
+    </label>`).join('');
+}
+
+function selectedKitPaintIds(){
+  return [...document.querySelectorAll('#kitPaintPicker input[type="checkbox"]:checked')].map(x=>x.value);
 }
 
 function render(){
@@ -135,6 +183,7 @@ function render(){
             <div class="muted">rarity ${k.rarity??'—'}/10</div>
           </div>
         </div>
+        ${(k.paintIds||[]).length?`<div class="tilePaints">Paints: ${(k.paintIds||[]).map(id=>paintById(id)).filter(Boolean).map(p=>esc([p.code,p.name].filter(Boolean).join(' '))).join(' · ')}</div>`:''}
         <div class="itemBottom">
           <span>${k.paid==null?(k.paidJpy!=null?`paid ¥${Number(k.paidJpy).toLocaleString()}`:'cost unknown'):`paid ${money(k.paid)}${k.paidJpy!=null?` · ¥${Number(k.paidJpy).toLocaleString()}`:''}`}</span>
           <span class="${cls}">${r==null?'ROI —':`${r>=0?'+':''}${r.toFixed(1)}% ROI`}</span>
@@ -195,14 +244,21 @@ function openEditor(k=null){
     .forEach(id=>f(id).value=k?.[id]??'');
   f('deleteBtn').style.display=k?'inline-block':'none';
   renderEditorPhotos();
+  renderKitPaintPicker();
   d.showModal();
 }
 
 async function refresh(){
   allKits=await getAllStore(KIT_STORE);
   allPhotos=await getAllStore(PHOTO_STORE);
+  allPaints=await getAllStore(PAINT_STORE);
   render();
-  if(document.querySelector('#editor').open) renderEditorPhotos();
+  renderPaintInventorySummary();
+  if(document.querySelector('#editor').open){
+    renderEditorPhotos();
+    renderKitPaintPicker();
+  }
+  if(document.querySelector('#paintDialog')?.open) renderPaintList();
 }
 
 function nextKitId(){
@@ -295,6 +351,75 @@ function dataUrlToBlob(dataUrl){
   return new Blob([arr],{type:mime});
 }
 
+
+function clearPaintEditor(){
+  ['paintId','paintBrand','paintCode','paintName','paintNotes'].forEach(id=>document.querySelector('#'+id).value='');
+  document.querySelector('#paintType').value='';
+  document.querySelector('#paintStock').value='In stock';
+  document.querySelector('#paintEditorTitle').textContent='Add paint';
+  document.querySelector('#paintDeleteBtn').style.display='none';
+}
+
+function renderPaintList(){
+  const list=document.querySelector('#paintList');
+  if(!list) return;
+  if(!allPaints.length){
+    list.innerHTML='<div class="muted">No paints in inventory yet.</div>';
+    return;
+  }
+  list.innerHTML=allPaints.slice().sort((a,b)=>paintLabel(a).localeCompare(paintLabel(b))).map(p=>`
+    <button type="button" class="paintRow" data-paint-id="${p.id}">
+      <div class="paintRowMain">
+        <div class="paintRowName">${esc(paintLabel(p))}</div>
+        <div class="paintRowMeta">${esc([p.type,p.notes].filter(Boolean).join(' · '))}</div>
+      </div>
+      <span class="stockBadge ${esc(p.stock||'')}">${esc(p.stock||'')}</span>
+    </button>`).join('');
+  list.querySelectorAll('.paintRow').forEach(row=>row.addEventListener('click',()=>{
+    const p=allPaints.find(x=>x.id===row.dataset.paintId);
+    if(!p) return;
+    document.querySelector('#paintId').value=p.id;
+    document.querySelector('#paintBrand').value=p.brand||'';
+    document.querySelector('#paintCode').value=p.code||'';
+    document.querySelector('#paintName').value=p.name||'';
+    document.querySelector('#paintType').value=p.type||'';
+    document.querySelector('#paintStock').value=p.stock||'In stock';
+    document.querySelector('#paintNotes').value=p.notes||'';
+    document.querySelector('#paintEditorTitle').textContent='Edit paint';
+    document.querySelector('#paintDeleteBtn').style.display='inline-block';
+  }));
+}
+
+async function savePaint(){
+  const id=document.querySelector('#paintId').value || `PAINT-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+  const rec={
+    id,
+    brand:document.querySelector('#paintBrand').value.trim(),
+    code:document.querySelector('#paintCode').value.trim(),
+    name:document.querySelector('#paintName').value.trim(),
+    type:document.querySelector('#paintType').value,
+    stock:document.querySelector('#paintStock').value,
+    notes:document.querySelector('#paintNotes').value.trim()
+  };
+  if(!rec.name&&!rec.code) return alert('Enter a paint name or code.');
+  await putStore(PAINT_STORE,rec);
+  clearPaintEditor();
+  await refresh();
+}
+
+async function deletePaint(){
+  const id=document.querySelector('#paintId').value;
+  if(!id||!confirm('Delete this paint from your inventory?')) return;
+  await deleteStore(PAINT_STORE,id);
+  for(const k of allKits){
+    if((k.paintIds||[]).includes(id)){
+      await putStore(KIT_STORE,{...k,paintIds:(k.paintIds||[]).filter(x=>x!==id)});
+    }
+  }
+  clearPaintEditor();
+  await refresh();
+}
+
 async function exportBackup(){
   const status=document.querySelector('#backupStatus');
   status.textContent='Preparing backup…';
@@ -312,6 +437,7 @@ async function exportBackup(){
     version:2,
     exportedAt:new Date().toISOString(),
     kits:allKits,
+    paints:allPaints,
     photos
   };
 
@@ -321,7 +447,7 @@ async function exportBackup(){
   a.download=`model-kit-portfolio-full-backup-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
-  status.textContent=`Backup exported: ${allKits.length} kits, ${photos.length} photos.`;
+  status.textContent=`Backup exported: ${allKits.length} kits, ${allPaints.length} paints, ${photos.length} photos.`;
 }
 
 async function importBackupFile(file){
@@ -345,8 +471,10 @@ async function importBackupFile(file){
 
   await clearStore(KIT_STORE);
   await clearStore(PHOTO_STORE);
+  await clearStore(PAINT_STORE);
 
   for(const k of parsed.kits) await putStore(KIT_STORE,k);
+  for(const p of (parsed.paints||[])) await putStore(PAINT_STORE,p);
   for(const p of (parsed.photos||[])){
     await putStore(PHOTO_STORE,{
       id:p.id,kitId:p.kitId,cover:!!p.cover,createdAt:p.createdAt||Date.now(),
@@ -355,7 +483,7 @@ async function importBackupFile(file){
   }
 
   await refresh();
-  status.textContent=`Imported ${parsed.kits.length} kits and ${(parsed.photos||[]).length} photos.`;
+  status.textContent=`Imported ${parsed.kits.length} kits, ${(parsed.paints||[]).length} paints and ${(parsed.photos||[]).length} photos.`;
 }
 
 document.querySelector('#addBtn').addEventListener('click',()=>openEditor());
@@ -377,6 +505,7 @@ document.querySelector('#saveBtn').addEventListener('click',async()=>{
     value:f('value').value===''?null:+f('value').value,
     rarity:f('rarity').value===''?null:+f('rarity').value,
     status:f('status').value,
+    paintIds:selectedKitPaintIds(),
     notes:f('notes').value.trim()
   };
 
@@ -409,6 +538,17 @@ document.querySelector('#photoInput').addEventListener('change',async e=>{
   document.querySelector('#'+id).addEventListener('input',render)
 );
 
+
+document.querySelector('#paintInventoryBtn').addEventListener('click',()=>{
+  clearPaintEditor();
+  renderPaintList();
+  document.querySelector('#paintDialog').showModal();
+});
+document.querySelector('#closePaintBtn').addEventListener('click',()=>document.querySelector('#paintDialog').close());
+document.querySelector('#paintSaveBtn').addEventListener('click',savePaint);
+document.querySelector('#paintDeleteBtn').addEventListener('click',deletePaint);
+document.querySelector('#paintClearBtn').addEventListener('click',clearPaintEditor);
+
 document.querySelector('#backupBtn').addEventListener('click',()=>{
   document.querySelector('#backupStatus').textContent='';
   document.querySelector('#backupDialog').showModal();
@@ -428,6 +568,7 @@ document.querySelector('#resetDataBtn').addEventListener('click',async()=>{
   if(!confirm('Delete all collection records and all locally stored photos from this device?')) return;
   await clearStore(KIT_STORE);
   await clearStore(PHOTO_STORE);
+  await clearStore(PAINT_STORE);
   await refresh();
   document.querySelector('#backupStatus').textContent='All local app data deleted.';
 });
@@ -435,26 +576,21 @@ document.querySelector('#resetDataBtn').addEventListener('click',async()=>{
 
 async function updateVersionStatus(){
   const badge=document.querySelector('#appVersionBadge');
-  const status=document.querySelector('#buildStatus');
-  if(badge) badge.textContent=`v${APP_VERSION}`;
-  if(!status) return;
-
+  if(!badge) return;
+  badge.textContent=`v${APP_VERSION}`;
   try{
     const r=await fetch(`version.json?ts=${Date.now()}`,{cache:'no-store'});
     const remote=await r.json();
-    if(remote.version===APP_VERSION){
-      status.textContent=`Latest version running · ${BUILD_ID}`;
-      status.className='buildStatus ok';
+    if(remote.version!==APP_VERSION){
+      badge.textContent=`v${APP_VERSION} ↑`;
+      badge.title=`Update available: v${remote.version}`;
     }else{
-      status.textContent=`Update available: v${remote.version} · currently v${APP_VERSION}`;
-      status.className='buildStatus warn';
+      badge.title='Latest deployed version';
     }
   }catch(e){
-    status.textContent=`Running v${APP_VERSION} · offline version check unavailable`;
-    status.className='buildStatus';
+    badge.title='Offline version check unavailable';
   }
 }
-
 (async()=>{
   updateVersionStatus();
   db=await openDB();
