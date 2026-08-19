@@ -134,7 +134,7 @@ function render(){
           </div>
         </div>
         <div class="itemBottom">
-          <span>${k.paid==null?'cost unknown':`paid ${money(k.paid)}`}</span>
+          <span>${k.paid==null?(k.paidJpy!=null?`paid ¥${Number(k.paidJpy).toLocaleString()}`:'cost unknown'):`paid ${money(k.paid)}${k.paidJpy!=null?` · ¥${Number(k.paidJpy).toLocaleString()}`:''}`}</span>
           <span class="${cls}">${r==null?'ROI —':`${r>=0?'+':''}${r.toFixed(1)}% ROI`}</span>
         </div>
       </div>
@@ -189,7 +189,7 @@ function openEditor(k=null){
   activeEditorId=k?.id||null;
   f('editorTitle').textContent=k?'Edit kit':'Add kit';
   f('kitId').value=k?.id||'';
-  ['name','franchise','grade','scale','series','paid','value','rarity','status','notes']
+  ['name','franchise','grade','scale','series','paid','paidJpy','value','rarity','status','notes']
     .forEach(id=>f(id).value=k?.[id]??'');
   f('deleteBtn').style.display=k?'inline-block':'none';
   renderEditorPhotos();
@@ -371,6 +371,7 @@ document.querySelector('#saveBtn').addEventListener('click',async()=>{
     scale:f('scale').value.trim(),
     series:f('series').value.trim(),
     paid:f('paid').value===''?null:+f('paid').value,
+    paidJpy:f('paidJpy').value===''?null:+f('paidJpy').value,
     value:f('value').value===''?null:+f('value').value,
     rarity:f('rarity').value===''?null:+f('rarity').value,
     status:f('status').value,

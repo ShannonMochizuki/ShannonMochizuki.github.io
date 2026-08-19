@@ -37,3 +37,11 @@ Clearing browser/site data can erase local records and images.
 - Cover photos grow to 140×140 px on wider displays.
 - Replaced the generic app icon with a model-kit/mecha themed icon.
 - Existing collection records and locally stored photos are preserved.
+
+
+## v4
+- Added an optional **Paid (JPY)** field to each model kit.
+- SGD and JPY purchase prices can both be recorded for the same kit.
+- JPY-only purchases display directly on collection cards.
+- The JPY amount is included automatically in full backups.
+- No exchange-rate conversion is performed automatically, so historical purchase amounts remain exact.
