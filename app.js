@@ -1,5 +1,5 @@
-const APP_VERSION='9.0';
-const BUILD_ID='2026-08-20-v9';
+const APP_VERSION='10.0';
+const BUILD_ID='2026-08-20-v10';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -7,7 +7,7 @@ const PHOTO_STORE='photos';
 const PAINT_STORE='paints';
 const VERSION=3;
 
-let db, allKits=[], allPhotos=[], allPaints=[], activeEditorId=null, pendingKitPaintIds=[];
+let db, allKits=[], allPhotos=[], allPaints=[], activeEditorId=null, pendingKitPaintIds=[], pendingPaintPhoto=null;
 
 function openDB(){
   return new Promise((resolve,reject)=>{
@@ -86,38 +86,47 @@ const paintLabel=p=>p?[p.brand,p.code,p.name].filter(Boolean).join(' '):'Unknown
 
 function renderPaintInventorySummary(){
   const summary=document.querySelector('#paintSummary');
-  const quick=document.querySelector('#paintQuickList');
-  if(!summary||!quick) return;
+  if(!summary) return;
   const inStock=allPaints.filter(p=>p.stock==='In stock').length;
   const low=allPaints.filter(p=>p.stock==='Low').length;
   summary.textContent=`${allPaints.length} paints · ${inStock} in stock${low?` · ${low} low`:''}`;
-  if(!allPaints.length){
-    quick.innerHTML='<span class="muted">No paints added yet.</span>';
-    return;
-  }
-  quick.innerHTML=allPaints.slice(0,12).map(p=>{
-    const cls=(p.stock||'').toLowerCase().replace(' ','');
-    return `<span class="paintChip ${cls}"><span class="paintDot"></span>${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`;
-  }).join('');
 }
 
-function renderSelectedKitPaints(){
-  const summary=document.querySelector('#kitPaintSummary');
-  const box=document.querySelector('#selectedKitPaints');
-  if(!summary||!box) return;
+function renderPaintGallery(){
+  const box=document.querySelector('#paintGallery');
+  if(!box) return;
+  const q=(document.querySelector('#paintSearch')?.value||'').trim().toLowerCase();
+  const stock=document.querySelector('#paintStockFilter')?.value||'';
 
-  const kit=activeEditorId?allKits.find(k=>k.id===activeEditorId):null;
-  const ids=kit?.paintIds||[];
-  const paints=ids.map(paintById).filter(Boolean);
+  let data=allPaints.filter(p=>{
+    const matchesQ=!q||`${p.brand||''} ${p.code||''} ${p.name||''} ${p.type||''}`.toLowerCase().includes(q);
+    const matchesStock=!stock||p.stock===stock;
+    return matchesQ&&matchesStock;
+  }).sort((a,b)=>paintLabel(a).localeCompare(paintLabel(b)));
 
-  summary.textContent=paints.length ? `${paints.length} paint${paints.length===1?'':'s'} assigned` : 'No paints assigned';
-
-  if(!paints.length){
-    box.innerHTML='<span class="muted">Tap “Select paints” to assign paints from your inventory.</span>';
+  if(!data.length){
+    box.innerHTML='<div class="muted">No paints match this view.</div>';
     return;
   }
 
-  box.innerHTML=paints.map(p=>`<span class="selectedPaintChip">${esc([p.code,p.name].filter(Boolean).join(' ')||p.brand||'Paint')}</span>`).join('');
+  box.innerHTML=data.map(p=>{
+    const photo=p.photoDataUrl
+      ? `<img class="paintCardImage" src="${p.photoDataUrl}" alt="">`
+      : `<div class="paintCardPlaceholder">🎨</div>`;
+    const price=p.value!=null?`S$${Number(p.value).toFixed(2)}`:(p.paid!=null?`Paid S$${Number(p.paid).toFixed(2)}`:'Price not set');
+    return `<article class="paintCard" data-paint-id="${p.id}">
+      ${photo}
+      <div class="paintCardBody">
+        <div class="paintCardName">${esc(paintLabel(p))}</div>
+        <div class="paintCardMeta">${esc([p.type,p.stock].filter(Boolean).join(' · '))}</div>
+        <div class="paintCardPrice">${price}</div>
+      </div>
+    </article>`;
+  }).join('');
+
+  box.querySelectorAll('.paintCard').forEach(card=>card.addEventListener('click',()=>{
+    openPaintEditor(allPaints.find(p=>p.id===card.dataset.paintId));
+  }));
 }
 
 function renderKitPaintPicker(){
@@ -275,6 +284,7 @@ async function refresh(){
   allPaints=await getAllStore(PAINT_STORE);
   render();
   renderPaintInventorySummary();
+  renderPaintGallery();
   if(document.querySelector('#editor').open){
     renderEditorPhotos();
     renderSelectedKitPaints();
@@ -374,31 +384,35 @@ function dataUrlToBlob(dataUrl){
 
 
 function clearPaintEditor(){
-  ['paintId','paintBrand','paintCode','paintName','paintNotes'].forEach(id=>document.querySelector('#'+id).value='');
+  ['paintId','paintBrand','paintCode','paintName','paintNotes','paintPaid','paintValue','paintPaidJpy'].forEach(id=>{
+    const el=document.querySelector('#'+id); if(el) el.value='';
+  });
   document.querySelector('#paintType').value='';
   document.querySelector('#paintStock').value='In stock';
   document.querySelector('#paintEditorTitle').textContent='Add paint';
   document.querySelector('#paintDeleteBtn').style.display='none';
+  pendingPaintPhoto=null;
+  renderPaintPhotoPreview();
 }
 
-function renderPaintList(){
-  const list=document.querySelector('#paintList');
-  if(!list) return;
-  if(!allPaints.length){
-    list.innerHTML='<div class="muted">No paints in inventory yet.</div>';
-    return;
+function renderPaintPhotoPreview(){
+  const img=document.querySelector('#paintPhotoPreview');
+  const ph=document.querySelector('#paintPhotoPlaceholder');
+  if(!img||!ph) return;
+  if(pendingPaintPhoto){
+    img.src=pendingPaintPhoto;
+    img.style.display='block';
+    ph.style.display='none';
+  }else{
+    img.removeAttribute('src');
+    img.style.display='none';
+    ph.style.display='flex';
   }
-  list.innerHTML=allPaints.slice().sort((a,b)=>paintLabel(a).localeCompare(paintLabel(b))).map(p=>`
-    <button type="button" class="paintRow" data-paint-id="${p.id}">
-      <div class="paintRowMain">
-        <div class="paintRowName">${esc(paintLabel(p))}</div>
-        <div class="paintRowMeta">${esc([p.type,p.notes].filter(Boolean).join(' · '))}</div>
-      </div>
-      <span class="stockBadge ${esc(p.stock||'')}">${esc(p.stock||'')}</span>
-    </button>`).join('');
-  list.querySelectorAll('.paintRow').forEach(row=>row.addEventListener('click',()=>{
-    const p=allPaints.find(x=>x.id===row.dataset.paintId);
-    if(!p) return;
+}
+
+function openPaintEditor(p=null){
+  clearPaintEditor();
+  if(p){
     document.querySelector('#paintId').value=p.id;
     document.querySelector('#paintBrand').value=p.brand||'';
     document.querySelector('#paintCode').value=p.code||'';
@@ -406,9 +420,28 @@ function renderPaintList(){
     document.querySelector('#paintType').value=p.type||'';
     document.querySelector('#paintStock').value=p.stock||'In stock';
     document.querySelector('#paintNotes').value=p.notes||'';
+    document.querySelector('#paintPaid').value=p.paid??'';
+    document.querySelector('#paintValue').value=p.value??'';
+    document.querySelector('#paintPaidJpy').value=p.paidJpy??'';
+    pendingPaintPhoto=p.photoDataUrl||null;
     document.querySelector('#paintEditorTitle').textContent='Edit paint';
     document.querySelector('#paintDeleteBtn').style.display='inline-block';
-  }));
+    renderPaintPhotoPreview();
+  }
+  document.querySelector('#paintDialog').showModal();
+}
+
+async function fileToCompressedDataUrl(file){
+  const bitmap=await createImageBitmap(file);
+  const maxEdge=1200;
+  const scale=Math.min(1,maxEdge/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+  canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const ctx=canvas.getContext('2d',{alpha:false});
+  ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  bitmap.close();
+  return canvas.toDataURL('image/jpeg',0.82);
 }
 
 async function savePaint(){
@@ -420,6 +453,10 @@ async function savePaint(){
     name:document.querySelector('#paintName').value.trim(),
     type:document.querySelector('#paintType').value,
     stock:document.querySelector('#paintStock').value,
+    paid:document.querySelector('#paintPaid').value===''?null:+document.querySelector('#paintPaid').value,
+    paidJpy:document.querySelector('#paintPaidJpy').value===''?null:+document.querySelector('#paintPaidJpy').value,
+    value:document.querySelector('#paintValue').value===''?null:+document.querySelector('#paintValue').value,
+    photoDataUrl:pendingPaintPhoto,
     notes:document.querySelector('#paintNotes').value.trim()
   };
   if(!rec.name&&!rec.code) return alert('Enter a paint name or code.');
@@ -587,13 +624,37 @@ document.querySelector('#saveKitPaintsBtn').addEventListener('click',()=>{
   }
 });
 
-document.querySelector('#paintInventoryBtn').addEventListener('click',()=>{
-  clearPaintEditor();
-  renderPaintList();
-  const dlg=document.querySelector('#paintDialog');
-  if(dlg && typeof dlg.showModal==='function') dlg.showModal();
-  else alert('Paint inventory dialog could not be opened. Please update to the latest app version.');
+
+function showView(name){
+  const home=document.querySelector('#homeView'), paints=document.querySelector('#paintsView');
+  const homeTab=document.querySelector('#homeTab'), paintsTab=document.querySelector('#paintsTab');
+  const isPaints=name==='paints';
+  home.classList.toggle('active',!isPaints);
+  paints.classList.toggle('active',isPaints);
+  homeTab.classList.toggle('active',!isPaints);
+  paintsTab.classList.toggle('active',isPaints);
+  if(isPaints) renderPaintGallery();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelector('#homeTab').addEventListener('click',()=>showView('home'));
+document.querySelector('#paintsTab').addEventListener('click',()=>showView('paints'));
+document.querySelector('#addPaintBtn').addEventListener('click',()=>openPaintEditor());
+document.querySelector('#paintSearch').addEventListener('input',renderPaintGallery);
+document.querySelector('#paintStockFilter').addEventListener('input',renderPaintGallery);
+
+document.querySelector('#paintPhotoInput').addEventListener('change',async e=>{
+  const file=e.target.files[0];
+  e.target.value='';
+  if(!file) return;
+  pendingPaintPhoto=await fileToCompressedDataUrl(file);
+  renderPaintPhotoPreview();
 });
+document.querySelector('#removePaintPhotoBtn').addEventListener('click',()=>{
+  pendingPaintPhoto=null;
+  renderPaintPhotoPreview();
+});
+
 document.querySelector('#closePaintBtn').addEventListener('click',()=>document.querySelector('#paintDialog').close());
 document.querySelector('#paintSaveBtn').addEventListener('click',savePaint);
 document.querySelector('#paintDeleteBtn').addEventListener('click',deletePaint);
@@ -648,7 +709,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=9.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=10.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }

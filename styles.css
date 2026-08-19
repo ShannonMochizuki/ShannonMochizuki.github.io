@@ -84,3 +84,25 @@ label input,label select,label textarea{margin-top:4px;color:var(--text)}
 .selectedKitPaints{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .selectedPaintChip{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;background:var(--soft);font-size:.76rem;color:var(--text)}
 .kitPaintPicker{display:grid;gap:7px;max-height:52vh;overflow:auto}
+
+body{padding-bottom:78px}
+.appView{display:none}.appView.active{display:block}
+.bottomNav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:7px 10px max(7px,env(safe-area-inset-bottom))}
+.navTab{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;font-size:.72rem}
+.navTab.active{color:var(--accent);font-weight:750}
+.navIcon{font-size:1.15rem;line-height:1}
+.paintControls{grid-template-columns:1fr 150px}
+.paintControls #paintSearch{grid-column:auto}
+.paintGallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.paintCard{background:var(--card);border:1px solid var(--line);border-radius:15px;overflow:hidden;cursor:pointer}
+.paintCardImage{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--soft);display:block}
+.paintCardPlaceholder{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--soft);font-size:2.3rem}
+.paintCardBody{padding:10px}
+.paintCardName{font-weight:750;font-size:.9rem;line-height:1.2}
+.paintCardMeta{font-size:.74rem;color:var(--muted);margin-top:4px}
+.paintCardPrice{font-weight:700;margin-top:7px}
+.paintPhotoSection{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;margin:10px 0 14px}
+.paintPhotoPreviewWrap{grid-column:1/-1;position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--soft)}
+.paintPhotoPreview{width:100%;height:100%;object-fit:cover;display:none}
+.paintPhotoPlaceholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--muted)}
+@media(min-width:640px){.paintGallery{grid-template-columns:repeat(3,minmax(0,1fr))}}

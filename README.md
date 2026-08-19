@@ -92,3 +92,14 @@ Clearing browser/site data can erase local records and images.
 - Required paints now use a clear **Select paints** button.
 - Selected paints appear as chips in the kit editor.
 - Kit tiles continue to show assigned paint requirements.
+
+
+## v10 — Dedicated Paint Inventory tab
+- Paint Inventory moved out of the Home dashboard into its own bottom-navigation tab.
+- Paints display as image cards in a scrollable inventory gallery.
+- Added optional paint image.
+- Added paint purchase price in SGD and JPY.
+- Added current paint value/price in SGD.
+- Existing brand, code, name, type, stock level, and notes are retained.
+- Kit Required Paints continue linking to this inventory.
+- Paint data and images remain private/local and are included in backups.
