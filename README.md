@@ -45,3 +45,13 @@ Clearing browser/site data can erase local records and images.
 - JPY-only purchases display directly on collection cards.
 - The JPY amount is included automatically in full backups.
 - No exchange-rate conversion is performed automatically, so historical purchase amounts remain exact.
+
+
+## v5 — Mobile photo gallery
+- Reworked the collection into large portrait-phone scrolling tiles.
+- Cover photo fills the entire model-kit card.
+- Kit name is centered near the bottom over a dark readability gradient.
+- Grade and scale are shown at the upper-left.
+- Market value remains visible at the upper-right.
+- Purchase price and ROI remain at the bottom.
+- Existing photo gallery, SGD/JPY purchase fields, backups, and local privacy architecture are preserved.
