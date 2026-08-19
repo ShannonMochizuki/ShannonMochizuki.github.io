@@ -1,5 +1,5 @@
-const APP_VERSION='12.0';
-const BUILD_ID='2026-08-20-v12';
+const APP_VERSION='13.0';
+const BUILD_ID='2026-08-20-v13';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -762,7 +762,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=12.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=13.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }

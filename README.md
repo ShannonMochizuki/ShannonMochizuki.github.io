@@ -119,3 +119,10 @@ Clearing browser/site data can erase local records and images.
 - Added fail-safe editor rendering so optional photo/paint sections cannot prevent the kit editor from opening.
 - Retained collection-level click delegation and added an Android touch pointer fallback.
 - Existing model data, photos, paint inventory, assignments, and backups are unchanged.
+
+
+## v13 — Gundam launcher icon
+- Replaced the generic PWA launcher icon with the supplied RX-78-2 Gundam photograph.
+- Added 192×192 and 512×512 PNG icons.
+- Added Android maskable/adaptive-icon versions with safe padding.
+- Updated the manifest and cache identifiers so the new icon can be fetched.
