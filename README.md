@@ -132,3 +132,10 @@ Clearing browser/site data can erase local records and images.
 - **Red** when current SGD market value is below recorded SGD purchase price.
 - **Green** when current value is equal to or above purchase price.
 - **Neutral gray** when there is no comparable SGD purchase price or market value.
+
+
+## v15 — Dashboard banners
+- Replaced the four dashboard metric cards with two cleaner dynamic banners.
+- Top banner shows total kit count plus MG/RG/HG/PG breakdown, with no repeated collection value.
+- Black Portfolio Value banner shows tracked value, comparable gain/loss, total spent, average value, valued-kit count, and best ROI.
+- Banner figures calculate from the local private database.

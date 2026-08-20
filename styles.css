@@ -113,3 +113,18 @@ body{padding-bottom:78px}
 
 .item{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .item:active{transform:scale(.997)}
+
+.collectionHero{position:relative;min-height:235px;border-radius:22px;overflow:hidden;margin:4px 0 14px;background:#071019 url('banner-gundam.jpg') right center/cover no-repeat;box-shadow:0 8px 22px #16202a1c}
+.collectionHeroOverlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,8,13,.97) 0%,rgba(3,8,13,.88) 40%,rgba(3,8,13,.30) 72%,rgba(3,8,13,.08) 100%)}
+.collectionHeroContent{position:relative;z-index:2;min-height:235px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;color:#fff}
+.heroCount{font-size:3rem;font-weight:800;line-height:.95}.heroLabel{margin-top:6px;font-size:1.45rem;font-weight:750}
+.gradeBreakdown{display:flex;flex-wrap:wrap;gap:17px;color:#c9d0d7;font-size:.93rem}.gradeItem strong{margin-left:5px;color:#fff;font-size:1.04rem}
+.portfolioBanner{background:linear-gradient(145deg,#111922,#050b11);color:#fff;border-radius:22px;padding:21px;margin:0 0 18px;box-shadow:0 8px 22px #16202a1c}
+.portfolioTop{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:12px;align-items:center}.portfolioLabel{color:#d4dbe2;font-size:.95rem}.portfolioValue{margin-top:5px;font-size:2.3rem;font-weight:800;letter-spacing:-.03em}
+.portfolioGain{margin-top:7px;font-size:1.04rem;font-weight:750}.portfolioGain.profit{color:#57d682}.portfolioGain.loss{color:#ff7979}.portfolioGain.neutral{color:#9faab5}
+.portfolioSpark svg{width:100%;height:auto;display:block}.sparkFill{fill:rgba(77,203,115,.13)}.sparkLine{fill:none;stroke:#52cf79;stroke-width:3;stroke-linecap:round}.sparkDot{fill:#64dc8a}
+.portfolioBanner.loss .sparkFill{fill:rgba(220,72,72,.12)}.portfolioBanner.loss .sparkLine{stroke:#e45b5b}.portfolioBanner.loss .sparkDot{fill:#f06d6d}
+.portfolioStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:18px;padding-top:17px;border-top:1px solid rgba(255,255,255,.13)}
+.portfolioStat{padding:0 10px;text-align:center;border-right:1px solid rgba(255,255,255,.12)}.portfolioStat:first-child{padding-left:0}.portfolioStat:last-child{padding-right:0;border-right:0}
+.portfolioStatLabel{color:#9faab5;font-size:.7rem}.portfolioStatValue{margin-top:4px;color:#fff;font-size:.88rem;font-weight:700}
+@media(max-width:520px){.collectionHero{min-height:215px;background-position:61% center}.collectionHeroContent{min-height:215px;padding:19px}.heroCount{font-size:2.7rem}.heroLabel{font-size:1.25rem}.gradeBreakdown{gap:12px;font-size:.8rem}.portfolioTop{grid-template-columns:minmax(0,1fr) 105px}.portfolioValue{font-size:1.95rem}.portfolioStats{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:14px}.portfolioStat:nth-child(2){border-right:0}.portfolioStat:nth-child(3),.portfolioStat:nth-child(4){padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}}

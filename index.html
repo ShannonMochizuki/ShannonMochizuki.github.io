@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1f4f7a">
-  <link rel="manifest" href="manifest.webmanifest?v=14.0">
-  <link rel="stylesheet" href="styles.css?v=14.0">
+  <link rel="manifest" href="manifest.webmanifest?v=15.0">
+  <link rel="stylesheet" href="styles.css?v=15.0">
   <title>My Model Kit Collection</title>
 </head>
 <body>
@@ -14,7 +14,7 @@
       <div class="eyebrow">MY COLLECTION</div>
       <div class="titleRow">
         <h1>Model Kit Portfolio</h1>
-        <span id="appVersionBadge" class="versionBadge">v14.0</span>
+        <span id="appVersionBadge" class="versionBadge">v15.0</span>
       </div>
     </div>
     <button id="addBtn" class="primary">+ Add</button>
@@ -22,7 +22,39 @@
 
   <main>
     <section id="homeView" class="appView active">
-    <section id="metrics" class="metrics"></section>
+    <section id="collectionHero" class="collectionHero" aria-label="Collection overview">
+      <div class="collectionHeroOverlay"></div>
+      <div class="collectionHeroContent">
+        <div>
+          <div id="heroKitCount" class="heroCount">0</div>
+          <div class="heroLabel">Model Kits</div>
+        </div>
+        <div id="heroGradeBreakdown" class="gradeBreakdown"></div>
+      </div>
+    </section>
+
+    <section id="portfolioBanner" class="portfolioBanner" aria-label="Portfolio value">
+      <div class="portfolioTop">
+        <div>
+          <div class="portfolioLabel">Portfolio Value</div>
+          <div id="portfolioValue" class="portfolioValue">S$0.00</div>
+          <div id="portfolioGain" class="portfolioGain neutral">Comparable gain unavailable</div>
+        </div>
+        <div class="portfolioSpark" aria-hidden="true">
+          <svg viewBox="0 0 180 70">
+            <path class="sparkFill" d="M0,64 C20,58 32,61 47,50 C61,40 75,50 89,39 C104,28 119,38 132,27 C147,15 160,18 180,5 L180,70 L0,70 Z"></path>
+            <path class="sparkLine" d="M0,64 C20,58 32,61 47,50 C61,40 75,50 89,39 C104,28 119,38 132,27 C147,15 160,18 180,5"></path>
+            <circle class="sparkDot" cx="180" cy="5" r="4"></circle>
+          </svg>
+        </div>
+      </div>
+      <div class="portfolioStats">
+        <div class="portfolioStat"><div class="portfolioStatLabel">Total Spent</div><div id="portfolioSpent" class="portfolioStatValue">S$0.00</div></div>
+        <div class="portfolioStat"><div class="portfolioStatLabel">Avg. Value</div><div id="portfolioAvg" class="portfolioStatValue">S$0.00</div></div>
+        <div class="portfolioStat"><div class="portfolioStatLabel">Valued Kits</div><div id="portfolioValued" class="portfolioStatValue">0</div></div>
+        <div class="portfolioStat"><div class="portfolioStatLabel">Best ROI</div><div id="portfolioBestRoi" class="portfolioStatValue">—</div></div>
+      </div>
+    </section>
 
     <section class="controls">
       <input id="search" type="search" placeholder="Search kits, series, grade…">
@@ -271,6 +303,6 @@
     <div id="backupStatus" class="muted status" aria-live="polite"></div>
   </dialog>
 
-  <script src="app.js?v=14.0"></script>
+  <script src="app.js?v=15.0"></script>
 </body>
 </html>

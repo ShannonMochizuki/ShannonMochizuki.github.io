@@ -1,5 +1,5 @@
-const APP_VERSION='14.0';
-const BUILD_ID='2026-08-20-v14';
+const APP_VERSION='15.0';
+const BUILD_ID='2026-08-21-v15';
 
 const DB_NAME='modelKitPortfolioDB';
 const KIT_STORE='kits';
@@ -181,6 +181,49 @@ function selectedKitPaintIds(){
   return [...document.querySelectorAll('#kitPaintPicker input[type="checkbox"]:checked')].map(x=>x.value);
 }
 
+function renderDashboardBanners(){
+  const counts={MG:0,RG:0,HG:0,PG:0};
+  allKits.forEach(k=>{
+    const g=String(k.grade||'').toUpperCase();
+    if(g.startsWith('MG')) counts.MG++;
+    else if(g.startsWith('RG')) counts.RG++;
+    else if(g.startsWith('HG')) counts.HG++;
+    else if(g.startsWith('PG')) counts.PG++;
+  });
+  const heroCount=document.querySelector('#heroKitCount');
+  const breakdown=document.querySelector('#heroGradeBreakdown');
+  if(heroCount) heroCount.textContent=allKits.length;
+  if(breakdown) breakdown.innerHTML=['MG','RG','HG','PG'].map(g=>`<span class="gradeItem">${g}<strong>${counts[g]}</strong></span>`).join('');
+
+  const valued=allKits.filter(k=>k.value!=null);
+  const totalValue=valued.reduce((s,k)=>s+Number(k.value||0),0);
+  const totalSpent=allKits.reduce((s,k)=>s+(k.paid!=null?Number(k.paid):0),0);
+  const comparable=allKits.filter(k=>k.paid!=null&&k.paid>0&&k.value!=null);
+  const comparablePaid=comparable.reduce((s,k)=>s+Number(k.paid),0);
+  const comparableValue=comparable.reduce((s,k)=>s+Number(k.value),0);
+  const gain=comparableValue-comparablePaid;
+  const gainPct=comparablePaid>0?(gain/comparablePaid)*100:null;
+  const roiValues=comparable.map(k=>roi(k)).filter(v=>v!=null);
+  const bestRoi=roiValues.length?Math.max(...roiValues):null;
+  const avgValue=valued.length?totalValue/valued.length:0;
+
+  const valueEl=document.querySelector('#portfolioValue');
+  const gainEl=document.querySelector('#portfolioGain');
+  const banner=document.querySelector('#portfolioBanner');
+  if(valueEl) valueEl.textContent=money(totalValue);
+  const spentEl=document.querySelector('#portfolioSpent'); if(spentEl) spentEl.textContent=money(totalSpent);
+  const avgEl=document.querySelector('#portfolioAvg'); if(avgEl) avgEl.textContent=money(avgValue);
+  const valuedEl=document.querySelector('#portfolioValued'); if(valuedEl) valuedEl.textContent=valued.length;
+  const bestEl=document.querySelector('#portfolioBestRoi');
+  if(bestEl){bestEl.textContent=bestRoi==null?'—':`${bestRoi>=0?'+':''}${bestRoi.toFixed(1)}%`;bestEl.style.color=bestRoi==null?'#fff':bestRoi>=0?'#57d682':'#ff7979';}
+
+  if(gainEl&&banner){
+    gainEl.className='portfolioGain'; banner.classList.remove('loss');
+    if(gainPct==null){gainEl.textContent='Comparable gain unavailable';gainEl.classList.add('neutral');}
+    else{const positive=gain>=0;gainEl.textContent=`${positive?'+':'-'}S$${Math.abs(gain).toFixed(2)} (${positive?'+':''}${gainPct.toFixed(1)}%)`;gainEl.classList.add(positive?'profit':'loss');if(!positive) banner.classList.add('loss');}
+  }
+}
+
 function render(){
   const q=document.querySelector('#search').value.toLowerCase().trim();
   const ff=document.querySelector('#franchiseFilter').value;
@@ -198,20 +241,7 @@ function render(){
 
   document.querySelector('#count').textContent=`${data.length} of ${allKits.length} kits`;
 
-  const spent=allKits.reduce((s,k)=>s+(k.paid||0),0);
-  const val=allKits.reduce((s,k)=>s+(k.value||0),0);
-  const known=allKits.filter(k=>k.paid!=null).length;
-  const matched=allKits.filter(k=>k.paid!=null&&k.value!=null);
-  const matchedPaid=matched.reduce((s,k)=>s+k.paid,0);
-  const matchedValue=matched.reduce((s,k)=>s+k.value,0);
-  const gain=matchedValue-matchedPaid;
-
-  document.querySelector('#metrics').innerHTML=[
-    ['Total kits',allKits.length,'collection size'],
-    ['Known spent',money(spent),`${known} known costs`],
-    ['Tracked value',money(val),'known market values'],
-    ['Comparable gain',money(gain),`${matched.length} kits with cost + value`]
-  ].map(x=>`<div class="metric"><div class="muted">${x[0]}</div><div class="v">${x[1]}</div><div class="muted">${x[2]}</div></div>`).join('');
+  renderDashboardBanners();
 
   document.querySelector('#list').innerHTML=data.map(k=>{
     const r=roi(k), cls=r==null?'':r>=0?'good':'bad';
@@ -767,7 +797,7 @@ async function updateVersionStatus(){
   await refresh();
   if('serviceWorker' in navigator){
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=14.0');
+      const reg=await navigator.serviceWorker.register('./sw.js?v=15.0');
       await reg.update();
     }catch(e){ console.warn('Service worker update failed',e); }
   }
